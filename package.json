@@ -1,0 +1,15 @@
+{
+  "name": "backend_series",
+  "version": "1.0.0",
+  "description": "\"all about learning backend\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "love",
+    "javascript"
+  ],
+  "author": "samiran",
+  "license": "ISC"
+}
