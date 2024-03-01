@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "\"all about learning backend\"",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,5 +12,8 @@
     "javascript"
   ],
   "author": "samiran",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
 }
