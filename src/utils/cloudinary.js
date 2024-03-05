@@ -9,7 +9,7 @@ cloudinary.config({
 
 cloudinary.uploader.upload("https://upload.wikimedia.org/wikipedia/commons/a/ae/Olympic_flag.jpg",
   { public_id: "olympic_flag" }, 
-  function(error, result) {console.log(result); });
+  function(error, result) {; });
 
 const uploadOnCloudnary= async (localFilePath)=>{
     try {
@@ -23,7 +23,9 @@ const uploadOnCloudnary= async (localFilePath)=>{
         console.log("file is uploaded on cloudnary", response.url)
         return response
     } catch (error) {
-        fs.unlinkSync(localFilePath)
+        fs.unlinkSync(localFilePath)// removed the localy saved files as the uplode operation got failed
         return null;
     }
 }
+
+export {uploadOnCloudnary}
