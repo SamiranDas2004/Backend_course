@@ -8,9 +8,6 @@ cloudinary.config({
   secure: true,
 });
 
-cloudinary.uploader.upload("https://upload.wikimedia.org/wikipedia/commons/a/ae/Olympic_flag.jpg",
-  { public_id: "olympic_flag" }, 
-  function(error, result) {; });
 
 const uploadOnCloudnary= async (localFilePath)=>{
     try {
@@ -21,7 +18,8 @@ const uploadOnCloudnary= async (localFilePath)=>{
                 resource_type:"auto"
             }
         )
-        console.log("file is uploaded on cloudnary", response.url)
+        fs.unlinkSync(localFilePath)
+        console.log( 'response is:',response)
         return response
     } catch (error) {
         fs.unlinkSync(localFilePath)// removed the localy saved files as the uplode operation got failed

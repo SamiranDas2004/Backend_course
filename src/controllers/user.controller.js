@@ -28,11 +28,16 @@ const registerUser = asyncHandeler(async (req, res) => {
 })
 
 if (existedUser) {
-    throw new ApiError(409, "User with email or username already exists")
+    throw new ApiError(409, "User with email or username already exists i love you")
 }
 
   const avatarLocalpath = req.files?.avatar[0]?.path;
-  const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  // const coverImageLocalPath = req.files?.coverImage[0]?.path;
+
+   let coverImageLocalPath;
+    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+        coverImageLocalPath = req.files.coverImage[0].path
+    }
 
   if (!avatarLocalpath) {
     throw new ApiError(409, "Avatar is must localpath ");
