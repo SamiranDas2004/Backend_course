@@ -72,4 +72,13 @@ if (existedUser) {
     .json(new ApiResponse(200, createdUser, "user register susscessfully"));
 });
 
-export { registerUser };
+const loginUser=asyncHandeler(async(req,res)=>{
+   // req body -> data
+    // username or email
+    //find the user
+    //password check
+    //access and referesh token
+    //send cookie 
+})
+
+export { registerUser,  };
