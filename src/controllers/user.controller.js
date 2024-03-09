@@ -119,6 +119,10 @@ const loginUser = asyncHandeler(async (req, res) => {
 
   const isPasswordValid = await user.isPasswordCorrect(password);
 
+  if (!isPasswordValid) {
+    throw new ApiError(401, "Invalid user credentials")
+    }
+
  const {accessToken,refreshToken}=await genarateAccessAndRefreshToken(user._id);
 
 
@@ -129,7 +133,10 @@ const options={
   secure:true
 }
 
-return res.status(200).cookie("accessToken",accessToken,options).cookie('refreshToken',refreshToken).json(
+return res.status(200)
+.cookie("accessToken",accessToken,options)
+.cookie('refreshToken',refreshToken)
+.json(
   new ApiResponse(
     200,
     {
@@ -141,6 +148,32 @@ return res.status(200).cookie("accessToken",accessToken,options).cookie('refresh
 
 
 
+
 });
 
-export { registerUser, loginUser };
+
+const logoutUser = asyncHandeler(async(req, res) => {
+  await User.findByIdAndUpdate(
+      req.user._id,
+      {
+          $unset: {
+              refreshToken: 1 // this removes the field from document
+          }
+      },
+      {
+          new: true
+      }
+  )
+
+  const options = {
+      httpOnly: true,
+      secure: true
+  }
+
+  return res
+  .status(200)
+  .clearCookie("accessToken", options)
+  .clearCookie("refreshToken", options)
+  .json(new ApiResponse(200, {}, "User logged Out"))
+})
+export { registerUser, loginUser,logoutUser };
