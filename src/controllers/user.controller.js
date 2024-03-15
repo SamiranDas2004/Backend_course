@@ -4,6 +4,7 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudnary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 const genarateAccessAndRefreshToken = async (userId) => {
   try {
@@ -12,7 +13,7 @@ const genarateAccessAndRefreshToken = async (userId) => {
     const refreshToken = user.generateRefreshToken();
 
     user.refreshToken = refreshToken;
- 
+    user.accessToken=accessToken;
     await user.save({ validateBeforeSave: false });
 
     return { accessToken, refreshToken };
@@ -127,7 +128,7 @@ const loginUser = asyncHandeler(async (req, res) => {
   }
 
   const { accessToken, refreshToken } = await genarateAccessAndRefreshToken(
-    user._id
+    user?._id
   );
 
   const loggedInUser = await User.findById(user._id).select(
@@ -405,6 +406,58 @@ const getUserChannelProfile = asyncHandeler(async (req, res) => {
     );
 });
 
+const getwatchHistory=asyncHandeler(async(req,res)=>{
+  const user = await User.aggregate[(
+    {
+      $match: {
+          _id: new mongoose.Types.ObjectId(req.user._id)
+      }
+  },
+  {
+    $lookup:{
+      from:"videos",
+      localField:"watchHistory",
+      foreignField:"_id",
+      as:"watchistory",
+      pipeline:[
+        {
+          $lookup:{
+            from:"users",
+            localField:"owner",
+            foreignField:"_id",
+            as:"owner",
+            pipeline:[
+              {
+                username:1,
+                fullName:1,
+                avatar:1
+              }
+            ]
+          }
+        },
+        {
+          $addFields:{
+            owner:{
+                $first: "$owner"
+            }
+        }
+        }
+      ]
+    }
+  }
+ )]
+ return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            user[0].watchHistory,
+            "Watch history fetched successfully"
+        )
+    )
+
+})
+
 export {
   registerUser,
   loginUser,
@@ -415,4 +468,6 @@ export {
   updateAccountDetails,
   updateUserAvatar,
   updateUserCoverImage,
+  getUserChannelProfile,
+  getwatchHistory
 };
