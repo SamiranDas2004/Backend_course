@@ -264,7 +264,7 @@ const updateAccountDetails = asyncHandeler(async (req, res) => {
     req.user?._id,
     {
       $set: {
-        fullName: fullName,
+        fullname: fullname,
         email: email,
       },
     },
