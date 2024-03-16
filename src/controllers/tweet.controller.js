@@ -7,6 +7,26 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 
 const createTweet = asyncHandler(async (req, res) => {
     //TODO: create tweet
+    // content & owner -> reeq.body
+    //
+    const {content,owner}=req.body;
+
+    if(!content ){
+        throw new ApiError(409,"tweet is not been created peroblem at featching the data")
+    }
+      
+   const tweet= await Tweet.create(
+        {
+            content,
+            owner
+        }
+    )
+    if (!tweet) {
+        throw new ApiError (409, "tweet is not created")
+    }
+    return res
+    .status(201)
+    .json(new ApiResponse(200, tweet, "tweet is created / susscessfully"));
 })
 
 const getUserTweets = asyncHandler(async (req, res) => {
@@ -15,6 +35,7 @@ const getUserTweets = asyncHandler(async (req, res) => {
 
 const updateTweet = asyncHandler(async (req, res) => {
     //TODO: update tweet
+    
 })
 
 const deleteTweet = asyncHandler(async (req, res) => {
