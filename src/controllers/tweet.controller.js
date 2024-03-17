@@ -94,7 +94,7 @@ const updateTweet = asyncHandeler(async (req, res) => {
         throw new ApiError(404, "Tweet not found");
     }
     
-    if (tweet?.owner.toString() !== req.user?._id.toString()) {
+    if (tweet?.owner !== req.user?._id) {
         throw new ApiError(400, "only owner can edit thier tweet");
     }
 
@@ -119,6 +119,7 @@ const updateTweet = asyncHandeler(async (req, res) => {
 
 const deleteTweet = asyncHandeler(async (req, res) => {
     //TODO: delete tweet
+    // 
 })
 
 export {

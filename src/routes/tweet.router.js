@@ -5,5 +5,5 @@ import { createTweet,updateTweet } from "../controllers/tweet.controller.js";
 const tweetRouter=Router();
 
 tweetRouter.route('/createTweet').post(createTweet);
-tweetRouter.route('/updateTweet').post(updateTweet)
+tweetRouter.route("/:tweetId").patch(updateTweet)
 export default tweetRouter
