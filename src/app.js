@@ -17,10 +17,13 @@ app.use(express.static('public'))
 app.use(cookieParser( ))
 
 // // routes
- import userRouter from './routes/user.router.js';
+ import userrouter from './routes/user.router.js';
+ import tweetRouter from './routes/tweet.router.js';
 
 //  // routes decalration
- app.use("/api/v1/users", userRouter)
+ app.use("/api/v1/users", userrouter)
+
+ app.use("/api/v1/tweet", tweetRouter)
 
 
 export  {app};
