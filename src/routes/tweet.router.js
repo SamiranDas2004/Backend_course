@@ -4,6 +4,6 @@ import { createTweet } from "../controllers/tweet.controller.js";
 
 const tweetRouter=Router();
 
-tweetRouter.route('/createTweet').post(createTweet);
+tweetRouter.route('/createTweet').post(verifiedJWT,createTweet);
 
 export default tweetRouter

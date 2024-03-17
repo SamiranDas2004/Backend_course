@@ -11,6 +11,41 @@ const createTweet = asyncHandeler(async (req, res) => {
     // content & owner -> reeq.body
     //
     const {content}=req.body;
+    // const {username}=req.body;
+
+    // const ownerName= await User.aggregate([
+    //     {
+    //         $match:{
+    //             username: username
+    //         }
+    //     },
+    //     {
+    //         $lookup:{
+    //             from:'users',
+    //             localField:'owner',
+    //             foreignField:'_id',
+    //             as:'owners'
+    //         }
+    //     },
+    //     {
+    //         $addFields:{
+    //             ownerDetails:{
+    //                 $size:'$owners'
+    //             }
+    //         }
+    //     },
+    //     {
+    //         $project:{
+                
+    //             username:1
+    //         }
+    //     }
+    // ])
+
+    // if (!ownerName?.length) {
+    //     throw new ApiError(409,'the owner is not defined i');
+    // }
+
 
     if(!content ){
         throw new ApiError(409,"tweet is not been created peroblem at featching the data")
@@ -19,6 +54,7 @@ const createTweet = asyncHandeler(async (req, res) => {
    const tweet= await Tweet.create(
         {
             content,
+           
             
         }
     )

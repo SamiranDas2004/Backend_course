@@ -342,7 +342,7 @@ const getUserChannelProfile = asyncHandeler(async (req, res) => {
       "cannot get the user in the getuserChannel profile meathod "
     );
   }
-  const channel = User.aggregate([
+  const channel =await User.aggregate([
     {
       $match: {
         username: username?.toLowerCase(),
