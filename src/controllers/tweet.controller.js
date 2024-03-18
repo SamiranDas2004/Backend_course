@@ -1,130 +1,143 @@
-import mongoose, { isValidObjectId } from "mongoose"
-import {Tweet} from "../models/tweet.model.js"
-import {User} from "../models/user.model.js"
-import {ApiError} from "../utils/Apierror.js"
-import {ApiResponse} from "../utils/ApiResponse.js"
+import mongoose, { isValidObjectId } from "mongoose";
+import { Tweet } from "../models/tweet.model.js";
+import { User } from "../models/user.model.js";
+import { ApiError } from "../utils/Apierror.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
-import { asyncHandeler } from "../utils/asyncHandeler.js"
+import { asyncHandeler } from "../utils/asyncHandeler.js";
 
 const createTweet = asyncHandeler(async (req, res) => {
-    //TODO: create tweet
-    // content & owner -> reeq.body
-    //
-    const {content}=req.body;
-    // const {username}=req.body;
+  //TODO: create tweet
+  // content & owner -> reeq.body
+  //
+  const { content } = req.body;
+  // const {username}=req.body;
 
-    // const ownerName= await User.aggregate([
-    //     {
-    //         $match:{
-    //             username: username
-    //         }
-    //     },
-    //     {
-    //         $lookup:{
-    //             from:'users',
-    //             localField:'owner',
-    //             foreignField:'_id',
-    //             as:'owners'
-    //         }
-    //     },
-    //     {
-    //         $addFields:{
-    //             ownerDetails:{
-    //                 $size:'$owners'
-    //             }
-    //         }
-    //     },
-    //     {
-    //         $project:{
-                
-    //             username:1
-    //         }
-    //     }
-    // ])
+  // const ownerName= await User.aggregate([
+  //     {
+  //         $match:{
+  //             username: username
+  //         }
+  //     },
+  //     {
+  //         $lookup:{
+  //             from:'users',
+  //             localField:'owner',
+  //             foreignField:'_id',
+  //             as:'owners'
+  //         }
+  //     },
+  //     {
+  //         $addFields:{
+  //             ownerDetails:{
+  //                 $size:'$owners'
+  //             }
+  //         }
+  //     },
+  //     {
+  //         $project:{
 
-    // if (!ownerName?.length) {
-    //     throw new ApiError(409,'the owner is not defined i');
-    // }
+  //             username:1
+  //         }
+  //     }
+  // ])
 
+  // if (!ownerName?.length) {
+  //     throw new ApiError(409,'the owner is not defined i');
+  // }
 
-    if(!content ){
-        throw new ApiError(409,"tweet is not been created peroblem at featching the data")
-    }
-      
-   const tweet= await Tweet.create(
-        {
-            content,
-           
-             
-        }
-    )
-    if (!tweet) {
-        throw new ApiError (409, "tweet is not created")
-    }
-    return res
+  if (!content) {
+    throw new ApiError(
+      409,
+      "tweet is not been created peroblem at featching the data"
+    );
+  }
+
+  const tweet = await Tweet.create({
+    content,
+  });
+  if (!tweet) {
+    throw new ApiError(409, "tweet is not created");
+  }
+  return res
     .status(201)
     .json(new ApiResponse(200, tweet, "tweet is created / susscessfully"));
-})
+});
 
 const getUserTweets = asyncHandeler(async (req, res) => {
-    // TODO: get user tweets
-})
+  // TODO: get user tweets
+});
 
 const updateTweet = asyncHandeler(async (req, res) => {
-    //TODO: update tweet
+  //TODO: update tweet
 
-    //check if the content is emptey or not
-    //check twtterId validation
-    //find the tweet by Id
-    //check for the owner
-    //update meathod
-    
-    const {content}=req.body;
-    const {tweetId}=req.params;
+  //check if the content is emptey or not
+  //check twtterId validation
+  //find the tweet by Id
+  //check for the owner
+  //update meathod
 
-    if (!content) {
-        throw new ApiError (409,"content is empty")
+  const { content } = req.body;
+  const { tweetId } = req.params;
+
+  if (!content) {
+    throw new ApiError(409, "content is empty");
+  }
+  if (!isValidObjectId(tweetId)) {
+    throw new ApiError(409, "tweetId is Invalid");
+  }
+  const tweet = await Tweet.findById(tweetId);
+
+  if (!tweet) {
+    throw new ApiError(404, "Tweet not found");
+  }
+
+  if (tweet?.owner !== req.user?._id) {
+    throw new ApiError(400, "only owner can edit thier tweet");
+  }
+
+  const newtweet = await Tweet.findByIdAndUpdate(
+    tweetId,
+    {
+      $set: {
+        content,
+      },
+    },
+    {
+      new: true,
     }
-    if (!isValidObjectId(tweetId)) {
-        throw new ApiError(409,"tweetId is Invalid");
-    }
-    const tweet = await Tweet.findById(tweetId);
+  ).select("-owner");
 
-    if (!tweet) {
-        throw new ApiError(404, "Tweet not found");
-    }
-    
-    if (tweet?.owner !== req.user?._id) {
-        throw new ApiError(400, "only owner can edit thier tweet");
-    }
-
-    const newtweet=await Tweet.findByIdAndUpdate(
-        tweetId,
-        {
-            $set:{
-                content
-            }
-        },
-        {
-            new:true
-        }
-    ).select("-owner")
-
-    return res
+  return res
     .status(200)
     .json(new ApiResponse(200, newtweet, "tweet updated successfully"));
-})
-
-
+});
 
 const deleteTweet = asyncHandeler(async (req, res) => {
-    //TODO: delete tweet
-    // 
-})
+  //TODO: delete tweet
+  // take the tweet id from the params
+  //identify if the id is a valid id or not
+  //find and update
+  const {content}=req.body;
+  const { tweetId } = req.params;
 
-export {
-    createTweet,
-    getUserTweets,
-    updateTweet,
-    deleteTweet
-}
+  if (!isValidObjectId(tweetId)) {
+      throw new ApiError(400, "Invalid tweetId");
+  }
+
+  const tweet = await Tweet.findById(tweetId);
+
+  if (!tweet) {
+      throw new ApiError(404, "Tweet not found");
+  }
+
+  
+
+  await Tweet.findByIdAndDelete(tweetId);
+
+  return res
+      .status(200)
+      .json(new ApiResponse(200, {tweetId}, "Tweet deleted successfully"));
+});
+
+export { createTweet, getUserTweets, updateTweet, deleteTweet };
