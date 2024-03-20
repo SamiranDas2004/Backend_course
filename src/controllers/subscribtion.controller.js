@@ -145,6 +145,11 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
                     $size:"$subscribedTo"
                 }
             }
+        },
+        {
+            $project:{
+                fullname:1
+            }
         }
     ])
 
