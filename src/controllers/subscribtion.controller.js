@@ -30,7 +30,7 @@ const toggleSubscription = asyncHandler(async (req, res) => {
         )
     }
 
-    else{ 
+  
           await Subscription.create({
         subscriber: req.user?._id,
         channel: channelId,
@@ -45,7 +45,7 @@ const toggleSubscription = asyncHandler(async (req, res) => {
                 "subscribed successfully"
             )
         );
-    }
+    
    
 
     
@@ -55,6 +55,51 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     // 
     const {channelId} = req.params
+    if (!isValidObjectId(channelId)) {
+        throw new ApiError(400,"channelId is not valid");
+    }
+
+   const allSubscribers = await Subscription.aggregate([
+    {
+        $match:{
+            channel: new mongoose.Types.ObjectId(channelId)
+        }
+    },
+    {
+        $lookup:{
+            from:'users',
+            localField:'channel',
+            foreignField:'_id',
+            as:'allSubscriberss'
+        }
+    },
+    {
+        $addFields:{
+            totalSubs:{
+                $cond:{
+                    if:{
+                        $In:[
+                            channelId,"$allSubscriberss.channel"
+                        ]
+                    },
+                    then: true,
+                    else:false
+                }
+            }
+        }
+    } ,
+        {
+            $project:{
+                fullname:1
+            }
+        }
+   ])
+
+return res
+.status(200)
+.json(new ApiResponse(200,allSubscribers,'all subscriber fetched successfully'))
+
+    
 
 })
 
